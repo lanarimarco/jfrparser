@@ -7,6 +7,7 @@ import jdk.jfr.consumer.RecordedThread;
 import jdk.jfr.consumer.RecordingFile;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.function.Consumer;
@@ -16,7 +17,10 @@ import java.util.function.Consumer;
  */
 public class JfrParser {
 
-    public static void parse(Path path, Consumer<Path> createdPath) throws IOException {
+    public static void parse(Path path, Consumer<Path> createdPath) throws IOException, FileNotFoundException {
+        if (!Files.exists(path)) {
+            throw new FileNotFoundException(path.toString());
+        }
         final Path outPath = Paths.get(path.getParent().toString(), path.getFileName().toString() + ".tsv");
         try (var out = new FileOutputStream(outPath.toFile())) {
             parse(path, out);
